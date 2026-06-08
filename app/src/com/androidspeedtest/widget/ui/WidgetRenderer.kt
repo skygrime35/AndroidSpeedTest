@@ -42,26 +42,26 @@ object WidgetRenderer {
         views.setProgressBar(R.id.widget_download_progress, 100, downloadProgress, false)
         views.setProgressBar(R.id.widget_upload_progress, 100, uploadProgress, false)
 
-        // 3. Set Status Message
+        val iterationPrefix = "Run ${result.currentIteration}/${result.totalIterations}: "
         val statusText = when (result.state) {
             SpeedTestState.IDLE -> context.getString(R.string.label_never_tested)
-            SpeedTestState.CONNECTING -> context.getString(R.string.label_testing, "Connecting...")
-            SpeedTestState.PINGING -> context.getString(R.string.label_testing, "Ping...")
+            SpeedTestState.CONNECTING -> iterationPrefix + "Connecting..."
+            SpeedTestState.PINGING -> iterationPrefix + "Ping..."
             SpeedTestState.DOWNLOADING -> {
                 val current = formatter.formatSpeed(result.downloadSpeedMaxBps)
-                context.getString(R.string.label_testing, "Download ($current)")
+                iterationPrefix + "Download ($current)"
             }
             SpeedTestState.UPLOADING -> {
                 val current = formatter.formatSpeed(result.uploadSpeedMaxBps)
-                context.getString(R.string.label_testing, "Upload ($current)")
+                iterationPrefix + "Upload ($current)"
             }
             SpeedTestState.COMPLETED -> {
                 val timeStr = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(result.timestamp))
-                context.getString(R.string.label_last_test, timeStr)
+                "Last run: $timeStr • Avg of ${result.totalIterations} runs"
             }
             SpeedTestState.ERROR -> {
                 val errMsg = result.errorMessage ?: "Unknown error"
-                "Failed: $errMsg. Tap to retry."
+                "Failed (Run ${result.currentIteration}/${result.totalIterations}): $errMsg. Tap to retry."
             }
         }
         views.setTextViewText(R.id.widget_status, statusText)

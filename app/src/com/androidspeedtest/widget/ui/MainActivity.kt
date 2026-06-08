@@ -131,17 +131,18 @@ class MainActivity : Activity() {
         // 2. Update status label and run button
         btnRun.isEnabled = (latest.state == SpeedTestState.IDLE || latest.state == SpeedTestState.COMPLETED || latest.state == SpeedTestState.ERROR)
         
+        val runPrefix = "Run ${latest.currentIteration}/${latest.totalIterations}: "
         appStatus.text = when (latest.state) {
             SpeedTestState.IDLE -> "System Idle"
-            SpeedTestState.CONNECTING -> "Connecting..."
-            SpeedTestState.PINGING -> "Measuring Ping..."
-            SpeedTestState.DOWNLOADING -> "Downloading... (${formatter.formatSpeed(latest.downloadSpeedMaxBps)})"
-            SpeedTestState.UPLOADING -> "Uploading... (${formatter.formatSpeed(latest.uploadSpeedMaxBps)})"
+            SpeedTestState.CONNECTING -> runPrefix + "Connecting..."
+            SpeedTestState.PINGING -> runPrefix + "Measuring Ping..."
+            SpeedTestState.DOWNLOADING -> runPrefix + "Downloading... (${formatter.formatSpeed(latest.downloadSpeedMaxBps)})"
+            SpeedTestState.UPLOADING -> runPrefix + "Uploading... (${formatter.formatSpeed(latest.uploadSpeedMaxBps)})"
             SpeedTestState.COMPLETED -> {
                 val timeStr = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(latest.timestamp))
-                "Last test completed at $timeStr"
+                "Last test (Avg of ${latest.totalIterations} runs) completed at $timeStr"
             }
-            SpeedTestState.ERROR -> "Test failed: ${latest.errorMessage ?: "Unknown error"}"
+            SpeedTestState.ERROR -> "Test failed (Run ${latest.currentIteration}/${latest.totalIterations}): ${latest.errorMessage ?: "Unknown error"}"
         }
 
         // 3. Refresh test history list
@@ -191,7 +192,7 @@ class MainActivity : Activity() {
 
             // Row 1: Timestamp
             val dateText = TextView(this).apply {
-                text = dateFormat.format(Date(item.timestamp))
+                text = dateFormat.format(Date(item.timestamp)) + " • Avg of ${item.totalIterations} runs"
                 setTextColor(resources.getColor(R.color.text_secondary))
                 textSize = 10f
                 setTypeface(null, android.graphics.Typeface.BOLD)

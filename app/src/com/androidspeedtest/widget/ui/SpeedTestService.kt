@@ -54,11 +54,13 @@ class SpeedTestService : Service() {
                             latencyMs: Double
                         ) {
                             val formatter = ServiceLocator.formatUseCase
+                            val latest = ServiceLocator.getRepository(this@SpeedTestService).readLatest()
+                            val prefix = "Run ${latest.currentIteration}/${latest.totalIterations}: "
                             val progressMsg = when (state) {
-                                SpeedTestState.PINGING -> "Latency: ${formatter.formatLatency(latencyMs)}"
-                                SpeedTestState.DOWNLOADING -> "Download: ${formatter.formatSpeed(maxBps)}"
-                                SpeedTestState.UPLOADING -> "Upload: ${formatter.formatSpeed(maxBps)}"
-                                else -> "Testing..."
+                                SpeedTestState.PINGING -> prefix + "Latency: ${formatter.formatLatency(latencyMs)}"
+                                SpeedTestState.DOWNLOADING -> prefix + "Download: ${formatter.formatSpeed(maxBps)}"
+                                SpeedTestState.UPLOADING -> prefix + "Upload: ${formatter.formatSpeed(maxBps)}"
+                                else -> prefix + "Testing..."
                             }
                             updateNotification(progressMsg)
                             sendUpdateBroadcast()

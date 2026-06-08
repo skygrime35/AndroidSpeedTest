@@ -103,17 +103,51 @@ class JsonSpeedTestRepository(private val context: Context) : SpeedTestRepositor
             put("latency_ms", result.latencyMs)
             put("timestamp", result.timestamp)
             put("state", result.state.name)
+            put("current_iteration", result.currentIteration)
+            put("total_iterations", result.totalIterations)
+            put("completed_downloads", JSONArray(result.completedDownloads))
+            put("completed_uploads", JSONArray(result.completedUploads))
+            put("completed_latencies", JSONArray(result.completedLatencies))
             put("error_message", result.errorMessage ?: JSONObject.NULL)
         }
     }
 
     private fun parseResult(json: JSONObject): SpeedTestResult {
+        val completedDownloads = mutableListOf<Long>()
+        val downloadsJson = json.optJSONArray("completed_downloads")
+        if (downloadsJson != null) {
+            for (i in 0 until downloadsJson.length()) {
+                completedDownloads.add(downloadsJson.getLong(i))
+            }
+        }
+
+        val completedUploads = mutableListOf<Long>()
+        val uploadsJson = json.optJSONArray("completed_uploads")
+        if (uploadsJson != null) {
+            for (i in 0 until uploadsJson.length()) {
+                completedUploads.add(uploadsJson.getLong(i))
+            }
+        }
+
+        val completedLatencies = mutableListOf<Double>()
+        val latenciesJson = json.optJSONArray("completed_latencies")
+        if (latenciesJson != null) {
+            for (i in 0 until latenciesJson.length()) {
+                completedLatencies.add(latenciesJson.getDouble(i))
+            }
+        }
+
         return SpeedTestResult(
             downloadSpeedMaxBps = json.getLong("download_speed_max_bps"),
             uploadSpeedMaxBps = json.getLong("upload_speed_max_bps"),
             latencyMs = json.getDouble("latency_ms"),
             timestamp = json.getLong("timestamp"),
             state = SpeedTestState.valueOf(json.getString("state")),
+            currentIteration = json.optInt("current_iteration", 1),
+            totalIterations = json.optInt("total_iterations", 3),
+            completedDownloads = completedDownloads,
+            completedUploads = completedUploads,
+            completedLatencies = completedLatencies,
             errorMessage = if (json.isNull("error_message")) null else json.getString("error_message")
         )
     }

@@ -15,6 +15,8 @@ class HttpSpeedTestRunner : SpeedTestRunner {
         downloadUrl: String,
         uploadUrl: String,
         pingUrl: String,
+        downloadDurationMs: Long,
+        uploadDurationMs: Long,
         listener: SpeedTestListener
     ): SpeedTestResult {
         
@@ -22,10 +24,10 @@ class HttpSpeedTestRunner : SpeedTestRunner {
         val latencyMs = runPingTest(pingUrl, listener)
         
         // 2. Download speed test
-        val maxDownloadSpeedBps = runDownloadTest(downloadUrl, latencyMs, listener)
+        val maxDownloadSpeedBps = runDownloadTest(downloadUrl, latencyMs, downloadDurationMs, listener)
         
         // 3. Upload speed test
-        val maxUploadSpeedBps = runUploadTest(uploadUrl, maxDownloadSpeedBps, latencyMs, listener)
+        val maxUploadSpeedBps = runUploadTest(uploadUrl, maxDownloadSpeedBps, latencyMs, uploadDurationMs, listener)
 
         return SpeedTestResult(
             downloadSpeedMaxBps = maxDownloadSpeedBps,
@@ -82,7 +84,12 @@ class HttpSpeedTestRunner : SpeedTestRunner {
         return avgLatency
     }
 
-    private fun runDownloadTest(downloadUrl: String, avgLatency: Double, listener: SpeedTestListener): Long {
+    private fun runDownloadTest(
+        downloadUrl: String,
+        avgLatency: Double,
+        downloadDurationMs: Long,
+        listener: SpeedTestListener
+    ): Long {
         listener.onStateChanged(SpeedTestState.DOWNLOADING, "Testing download speed...")
         
         var connection: HttpURLConnection? = null
@@ -109,7 +116,7 @@ class HttpSpeedTestRunner : SpeedTestRunner {
             val startTime = System.currentTimeMillis()
             var windowStartTime = startTime
             var windowBytes = 0L
-            val testTimeLimitMs = 8000L // 8 seconds maximum
+            val testTimeLimitMs = downloadDurationMs
 
             while (true) {
                 val read = inputStream.read(buffer)
@@ -147,6 +154,7 @@ class HttpSpeedTestRunner : SpeedTestRunner {
         uploadUrl: String,
         maxDownloadBps: Long,
         avgLatency: Double,
+        uploadDurationMs: Long,
         listener: SpeedTestListener
     ): Long {
         listener.onStateChanged(SpeedTestState.UPLOADING, "Testing upload speed...")
@@ -174,7 +182,7 @@ class HttpSpeedTestRunner : SpeedTestRunner {
             val startTime = System.currentTimeMillis()
             var windowStartTime = startTime
             var windowBytes = 0L
-            val testTimeLimitMs = 8000L // 8 seconds limit
+            val testTimeLimitMs = uploadDurationMs
 
             while (true) {
                 outputStream.write(buffer)

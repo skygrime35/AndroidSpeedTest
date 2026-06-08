@@ -13,6 +13,8 @@ interface SpeedTestRunner {
         downloadUrl: String,
         uploadUrl: String,
         pingUrl: String,
+        downloadDurationMs: Long,
+        uploadDurationMs: Long,
         listener: SpeedTestListener
     ): SpeedTestResult
 }
