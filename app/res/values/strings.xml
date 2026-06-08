@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Android Speed Test</string>
+    <string name="label_download">DOWNLOAD</string>
+    <string name="label_upload">UPLOAD</string>
+    <string name="label_ping">LATENCY</string>
+    <string name="label_last_test">Last run: %s</string>
+    <string name="label_never_tested">Never tested. Tap to start.</string>
+    <string name="label_testing">Testing... %s</string>
+    <string name="label_error">Failed. Tap to retry.</string>
+    <string name="btn_run_test">Run Speed Test</string>
+    <string name="title_history">Test History</string>
+    <string name="title_settings">Speed Test Settings</string>
+    <string name="label_download_url">Download Test URL</string>
+    <string name="label_upload_url">Upload Test URL</string>
+    <string name="label_ping_url">Ping Test URL</string>
+    <string name="btn_save">Save Settings</string>
+</resources>

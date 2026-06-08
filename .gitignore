@@ -1,0 +1,14 @@
+# Build files
+build/
+
+# Signing keys
+*.keystore
+*.jks
+
+# Logs and system files
+.DS_Store
+*.log
+
+# Local SDK caches if placed in directory
+android.jar
+*.zip
