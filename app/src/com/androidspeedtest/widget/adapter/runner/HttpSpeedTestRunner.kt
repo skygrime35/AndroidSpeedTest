@@ -145,16 +145,8 @@ class HttpSpeedTestRunner : SpeedTestRunner {
 
             // Final check for remaining bytes or fast transfers
             val totalElapsed = System.currentTimeMillis() - startTime
-            if (maxSpeedBps == 0L && totalElapsed > 10) {
+            if (maxSpeedBps == 0L && totalElapsed > 50) {
                 maxSpeedBps = (windowBytes * 8 * 1000) / totalElapsed
-            } else if (windowBytes > 0) {
-                val lastWindowElapsed = System.currentTimeMillis() - windowStartTime
-                if (lastWindowElapsed > 10) {
-                    val lastWindowSpeedBps = (windowBytes * 8 * 1000) / lastWindowElapsed
-                    if (lastWindowSpeedBps > maxSpeedBps) {
-                        maxSpeedBps = lastWindowSpeedBps
-                    }
-                }
             }
         } finally {
             try { inputStream?.close() } catch (_: Exception) {}
@@ -225,16 +217,8 @@ class HttpSpeedTestRunner : SpeedTestRunner {
 
             // Final check for remaining bytes or fast transfers
             val totalElapsed = System.currentTimeMillis() - startTime
-            if (maxSpeedBps == 0L && totalElapsed > 10) {
+            if (maxSpeedBps == 0L && totalElapsed > 50) {
                 maxSpeedBps = (windowBytes * 8 * 1000) / totalElapsed
-            } else if (windowBytes > 0) {
-                val lastWindowElapsed = System.currentTimeMillis() - windowStartTime
-                if (lastWindowElapsed > 10) {
-                    val lastWindowSpeedBps = (windowBytes * 8 * 1000) / lastWindowElapsed
-                    if (lastWindowSpeedBps > maxSpeedBps) {
-                        maxSpeedBps = lastWindowSpeedBps
-                    }
-                }
             }
             
             outputStream.flush()
