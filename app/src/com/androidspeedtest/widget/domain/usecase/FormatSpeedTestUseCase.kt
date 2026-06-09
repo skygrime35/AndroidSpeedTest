@@ -18,6 +18,6 @@ class FormatSpeedTestUseCase {
 
     fun formatLatency(latencyMs: Double): String {
         if (latencyMs <= 0.0) return "—"
-        return String.format(Locale.US, "%.0f ms", latencyMs)
+        return String.format(Locale.US, "%.1f ms", latencyMs)
     }
 }

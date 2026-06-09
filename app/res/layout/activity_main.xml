@@ -210,6 +210,41 @@
                 android:inputType="textUri"
                 android:layout_marginBottom="12dp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ping Test Server"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:layout_marginBottom="4dp" />
+
+            <RadioGroup
+                android:id="@+id/radio_group_ping"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <RadioButton
+                    android:id="@+id/radio_ping_cloudflare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cloudflare"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:buttonTint="@color/ping_yellow"
+                    android:layout_marginRight="24dp" />
+
+                <RadioButton
+                    android:id="@+id/radio_ping_google"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Google"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:buttonTint="@color/ping_yellow" />
+            </RadioGroup>
+
             <Button
                 android:id="@+id/btn_save_settings"
                 android:layout_width="match_parent"

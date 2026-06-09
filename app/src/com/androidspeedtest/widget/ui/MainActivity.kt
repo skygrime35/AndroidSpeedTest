@@ -35,6 +35,9 @@ class MainActivity : Activity() {
     
     private lateinit var editDownloadUrl: EditText
     private lateinit var editUploadUrl: EditText
+    private lateinit var radioGroupPing: android.widget.RadioGroup
+    private lateinit var radioPingCloudflare: android.widget.RadioButton
+    private lateinit var radioPingGoogle: android.widget.RadioButton
     private lateinit var btnSaveSettings: Button
 
     private val receiver = object : BroadcastReceiver() {
@@ -58,6 +61,9 @@ class MainActivity : Activity() {
         
         editDownloadUrl = findViewById(R.id.edit_download_url)
         editUploadUrl = findViewById(R.id.edit_upload_url)
+        radioGroupPing = findViewById(R.id.radio_group_ping)
+        radioPingCloudflare = findViewById(R.id.radio_ping_cloudflare)
+        radioPingGoogle = findViewById(R.id.radio_ping_google)
         btnSaveSettings = findViewById(R.id.btn_save_settings)
 
         // Load URLs into Settings fields
@@ -65,6 +71,11 @@ class MainActivity : Activity() {
         val (downloadUrl, uploadUrl, pingUrl) = repo.readUrls()
         editDownloadUrl.setText(downloadUrl)
         editUploadUrl.setText(uploadUrl)
+        if (pingUrl.contains("google")) {
+            radioPingGoogle.isChecked = true
+        } else {
+            radioPingCloudflare.isChecked = true
+        }
 
         // Click Handlers
         btnRun.setOnClickListener {
@@ -74,9 +85,14 @@ class MainActivity : Activity() {
         btnSaveSettings.setOnClickListener {
             val down = editDownloadUrl.text.toString().trim()
             val up = editUploadUrl.text.toString().trim()
+            val ping = if (radioPingGoogle.isChecked) {
+                "https://www.google.com"
+            } else {
+                "https://speed.cloudflare.com/__down?bytes=0"
+            }
             
             if (down.isNotEmpty() && up.isNotEmpty()) {
-                repo.saveUrls(down, up, pingUrl)
+                repo.saveUrls(down, up, ping)
                 Toast.makeText(this, "Settings saved!", Toast.LENGTH_SHORT).show()
                 refreshUi()
             } else {

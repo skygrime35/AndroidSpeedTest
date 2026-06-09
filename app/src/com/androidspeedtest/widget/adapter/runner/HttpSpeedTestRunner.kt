@@ -39,44 +39,46 @@ class HttpSpeedTestRunner : SpeedTestRunner {
     }
 
     private fun runPingTest(pingUrl: String, listener: SpeedTestListener): Double {
-        listener.onStateChanged(SpeedTestState.PINGING, "Measuring latency...")
+        val url = URL(pingUrl)
+        val host = url.host
+        listener.onStateChanged(SpeedTestState.PINGING, "Measuring latency to $host...")
         
-        val pings = mutableListOf<Long>()
+        val pings = mutableListOf<Double>()
         val totalAttempts = 4
         
-        for (i in 1..totalAttempts) {
-            var connection: HttpURLConnection? = null
-            try {
-                val url = URL(pingUrl)
-                val start = System.currentTimeMillis()
-                connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "HEAD"
-                connection.connectTimeout = 10000
-                connection.readTimeout = 10000
-                connection.setRequestProperty("User-Agent", USER_AGENT)
-                connection.useCaches = false
-                
-                val code = connection.responseCode
-                val elapsed = System.currentTimeMillis() - start
-                
-                if (code >= 200 && code < 400) {
-                    pings.add(elapsed)
-                }
-            } catch (e: Exception) {
-                // Ignore and try next
-            } finally {
-                connection?.disconnect()
-            }
+        try {
+            val port = if (url.port != -1) url.port else (if (url.protocol.lowercase() == "https") 443 else 80)
             
-            // Wait slightly between pings
-            Thread.sleep(150)
+            // Resolve DNS once before the loop to exclude DNS resolution time from latency
+            val inetAddress = java.net.InetAddress.getByName(host)
+            val socketAddress = java.net.InetSocketAddress(inetAddress, port)
+            
+            for (i in 1..totalAttempts) {
+                var socket: java.net.Socket? = null
+                try {
+                    socket = java.net.Socket()
+                    val start = System.nanoTime()
+                    socket.connect(socketAddress, 5000)
+                    val elapsed = (System.nanoTime() - start) / 1_000_000.0
+                    pings.add(elapsed)
+                } catch (e: Exception) {
+                    // Ignore and try next connection
+                } finally {
+                    try { socket?.close() } catch (_: Exception) {}
+                }
+                
+                // Wait slightly between pings
+                Thread.sleep(150)
+            }
+        } catch (e: Exception) {
+            // Handled if DNS or host resolution fails completely
         }
 
         if (pings.isEmpty()) {
-            throw Exception("Failed to contact latency server.")
+            throw Exception("Failed to contact latency server ($host).")
         }
 
-        // Discard first ping if we have multiple, to avoid DNS/connection warmup skewing results
+        // Discard first ping if we have multiple, to avoid TCP connection warmup skewing results
         val averagedPings = if (pings.size > 1) pings.subList(1, pings.size) else pings
         val avgLatency = averagedPings.average()
         
@@ -188,11 +190,13 @@ class HttpSpeedTestRunner : SpeedTestRunner {
             val startTime = System.currentTimeMillis()
             var windowStartTime = startTime
             var windowBytes = 0L
+            var totalBytesWritten = 0L
             val testTimeLimitMs = uploadDurationMs
 
             while (true) {
                 outputStream.write(buffer)
                 windowBytes += buffer.size
+                totalBytesWritten += buffer.size
                 
                 val now = System.currentTimeMillis()
                 val elapsed = now - startTime
@@ -225,8 +229,15 @@ class HttpSpeedTestRunner : SpeedTestRunner {
             outputStream.close()
             outputStream = null
             
-            // Read response code to finalize request
+            // Read response code to finalize request (blocks until all bytes are sent and ACKed)
             val code = connection.responseCode
+            val finalTimeMs = System.currentTimeMillis() - startTime
+            maxSpeedBps = if (finalTimeMs > 50) {
+                (totalBytesWritten * 8 * 1000) / finalTimeMs
+            } else {
+                maxSpeedBps
+            }
+            
             if (code < 200 || code >= 400) {
                 // Not throwing exception here if we successfully wrote the bytes
             }
