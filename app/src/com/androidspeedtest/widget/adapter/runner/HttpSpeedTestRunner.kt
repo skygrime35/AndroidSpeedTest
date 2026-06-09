@@ -100,7 +100,8 @@ class HttpSpeedTestRunner : SpeedTestRunner {
         var maxSpeedBps = 0L
         
         try {
-            val url = URL(downloadUrl)
+            val separator = if (downloadUrl.contains("?")) "&" else "?"
+            val url = URL(downloadUrl + separator + "nocache=" + System.currentTimeMillis())
             connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
             connection.connectTimeout = 10000
@@ -173,7 +174,8 @@ class HttpSpeedTestRunner : SpeedTestRunner {
         var maxSpeedBps = 0L
         
         try {
-            val url = URL(uploadUrl)
+            val separator = if (uploadUrl.contains("?")) "&" else "?"
+            val url = URL(uploadUrl + separator + "nocache=" + System.currentTimeMillis())
             connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "POST"
             connection.doOutput = true
@@ -251,6 +253,6 @@ class HttpSpeedTestRunner : SpeedTestRunner {
     }
 
     companion object {
-        private const val USER_AGENT = "Mozilla/5.0 (Android; SpeedTest App)"
+        private const val USER_AGENT = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
     }
 }
