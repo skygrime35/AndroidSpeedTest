@@ -99,7 +99,8 @@ class RunSpeedTestUseCase(
             // All runs completed successfully. Compute averages.
             val avgDownload = if (completedDownloads.isNotEmpty()) completedDownloads.average().toLong() else 0L
             val avgUpload = if (completedUploads.isNotEmpty()) completedUploads.average().toLong() else 0L
-            val avgLatency = if (completedLatencies.isNotEmpty()) completedLatencies.average() else 0.0
+            // Use the first latency measurement (quiet network) instead of averaging it with bufferbloat-inflated runs
+            val avgLatency = if (completedLatencies.isNotEmpty()) completedLatencies.first() else 0.0
 
             val completedResult = SpeedTestResult(
                 downloadSpeedMaxBps = avgDownload,
