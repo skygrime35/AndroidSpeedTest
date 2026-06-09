@@ -57,7 +57,6 @@ class HttpSpeedTestRunner : SpeedTestRunner {
                 var socket: java.net.Socket? = null
                 try {
                     socket = java.net.Socket()
-                    socket.bind(null) // Pre-bind socket to allocate local port before starting the timer
                     val start = System.nanoTime()
                     socket.connect(socketAddress, 5000)
                     val elapsed = (System.nanoTime() - start) / 1_000_000.0
