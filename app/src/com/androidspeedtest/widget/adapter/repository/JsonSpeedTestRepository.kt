@@ -58,9 +58,16 @@ class JsonSpeedTestRepository(private val context: Context) : SpeedTestRepositor
     }
 
     override fun readUrls(): Triple<String, String, String> {
-        val download = prefs.getString(KEY_DOWNLOAD_URL, DEFAULT_DOWNLOAD_URL) ?: DEFAULT_DOWNLOAD_URL
+        var download = prefs.getString(KEY_DOWNLOAD_URL, DEFAULT_DOWNLOAD_URL) ?: DEFAULT_DOWNLOAD_URL
         val upload = prefs.getString(KEY_UPLOAD_URL, DEFAULT_UPLOAD_URL) ?: DEFAULT_UPLOAD_URL
         val ping = prefs.getString(KEY_PING_URL, DEFAULT_PING_URL) ?: DEFAULT_PING_URL
+        
+        // Migrate away from Cloudflare's rate-limited download URL if it matches the old default
+        if (download.contains("speed.cloudflare.com/__down?bytes=")) {
+            download = DEFAULT_DOWNLOAD_URL
+            prefs.edit().putString(KEY_DOWNLOAD_URL, download).apply()
+        }
+        
         return Triple(download, upload, ping)
     }
 
@@ -159,7 +166,7 @@ class JsonSpeedTestRepository(private val context: Context) : SpeedTestRepositor
         private const val KEY_UPLOAD_URL = "upload_url"
         private const val KEY_PING_URL = "ping_url"
 
-        private const val DEFAULT_DOWNLOAD_URL = "https://speed.cloudflare.com/__down?bytes=10485760" // 10MB
+        private const val DEFAULT_DOWNLOAD_URL = "https://proof.ovh.net/files/10Mb.dat" // 10MB
         private const val DEFAULT_UPLOAD_URL = "https://speed.cloudflare.com/__up"
         private const val DEFAULT_PING_URL = "https://speed.cloudflare.com/__down?bytes=0"
     }
