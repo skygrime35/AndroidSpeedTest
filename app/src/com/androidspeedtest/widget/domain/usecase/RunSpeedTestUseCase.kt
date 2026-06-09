@@ -46,13 +46,13 @@ class RunSpeedTestUseCase(
                     )
                 )
 
-                // Execute the single run with 4 seconds download limit and 4 seconds upload limit
+                // Execute the single run with 4 seconds download limit and 8 seconds upload limit
                 val runResult = runner.runTest(
                     downloadUrl, 
                     uploadUrl, 
                     pingUrl, 
                     4000L, 
-                    4000L, 
+                    8000L, 
                     object : SpeedTestListener {
                         override fun onStateChanged(state: SpeedTestState, message: String) {
                             listener.onStateChanged(state, "Run $iteration/$totalIterations: $message")
