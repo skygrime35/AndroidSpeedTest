@@ -114,7 +114,7 @@ class HttpSpeedTestRunner : SpeedTestRunner {
             }
 
             inputStream = connection.inputStream
-            val buffer = ByteArray(65536) // 64KB buffer
+            val buffer = ByteArray(16384) // 16KB buffer
             val startTime = System.currentTimeMillis()
             var windowStartTime = startTime
             var windowBytes = 0L
@@ -181,12 +181,12 @@ class HttpSpeedTestRunner : SpeedTestRunner {
             connection.setRequestProperty("User-Agent", USER_AGENT)
             connection.setRequestProperty("Content-Type", "application/octet-stream")
             // Use chunked streaming mode to avoid caching the entire body in memory
-            connection.setChunkedStreamingMode(65536)
+            connection.setChunkedStreamingMode(16384)
             connection.useCaches = false
             connection.connect()
 
             outputStream = connection.outputStream
-            val buffer = ByteArray(65536) // 64KB dummy data buffer
+            val buffer = ByteArray(16384) // 16KB dummy data buffer
             val startTime = System.currentTimeMillis()
             var windowStartTime = startTime
             var windowBytes = 0L

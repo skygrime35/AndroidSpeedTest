@@ -86,7 +86,7 @@ class MainActivity : Activity() {
             val down = editDownloadUrl.text.toString().trim()
             val up = editUploadUrl.text.toString().trim()
             val ping = if (radioPingGoogle.isChecked) {
-                "https://www.google.com"
+                "https://dns.google"
             } else {
                 "https://speed.cloudflare.com/__down?bytes=0"
             }
