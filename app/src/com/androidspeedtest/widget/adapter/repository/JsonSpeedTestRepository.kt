@@ -71,6 +71,18 @@ class JsonSpeedTestRepository(private val context: Context) : SpeedTestRepositor
         return Triple(download, upload, ping)
     }
 
+    override fun saveIterations(iterations: Int) {
+        prefs.edit().putInt(KEY_ITERATIONS, iterations).apply()
+    }
+
+    override fun readIterations(): Int {
+        return prefs.getInt(KEY_ITERATIONS, DEFAULT_ITERATIONS)
+    }
+
+    override fun clearHistory() {
+        prefs.edit().remove(KEY_HISTORY).apply()
+    }
+
     private fun addToHistory(result: SpeedTestResult) {
         val history = readHistory().toMutableList()
         history.add(0, result) // Add to top
@@ -165,9 +177,11 @@ class JsonSpeedTestRepository(private val context: Context) : SpeedTestRepositor
         private const val KEY_DOWNLOAD_URL = "download_url"
         private const val KEY_UPLOAD_URL = "upload_url"
         private const val KEY_PING_URL = "ping_url"
+        private const val KEY_ITERATIONS = "iteration_count"
 
         private const val DEFAULT_DOWNLOAD_URL = "https://proof.ovh.net/files/10Mb.dat" // 10MB
         private const val DEFAULT_UPLOAD_URL = "https://speed.cloudflare.com/__up"
         private const val DEFAULT_PING_URL = "https://speed.cloudflare.com/__down?bytes=0"
+        private const val DEFAULT_ITERATIONS = 3
     }
 }

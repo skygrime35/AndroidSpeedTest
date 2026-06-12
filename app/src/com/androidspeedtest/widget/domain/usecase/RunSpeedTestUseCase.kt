@@ -15,7 +15,7 @@ class RunSpeedTestUseCase(
     fun execute(listener: SpeedTestListener): SpeedTestResult {
         val (downloadUrl, uploadUrl, pingUrl) = repository.readUrls()
         
-        val totalIterations = 3
+        val totalIterations = repository.readIterations().coerceIn(1, 10)
         val completedDownloads = mutableListOf<Long>()
         val completedUploads = mutableListOf<Long>()
         val completedLatencies = mutableListOf<Double>()

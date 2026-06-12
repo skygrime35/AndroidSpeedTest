@@ -14,7 +14,8 @@ Driven adapters implement the ports defined in the domain layer. They reside und
 - Implements `SpeedTestRepository`.
 - Persists data to SharedPreferences named `"SpeedTestPrefs"`.
 - Uses standard Android `org.json` to serialize speed test results and lists.
-- Saves a history list capped at the last 50 completed records.
+- Saves a history list capped at the last 50 completed records (with support for clearing history).
+- Persists iteration counts (defaulting to 3) in SharedPreferences for configure-once reuse.
 - Logs the latest test results to public storage `/sdcard/Download/speedtest_results.json` so termux scripts can read them. If storage permissions are not granted, it fails silently.
 
 ## Speed Test Runner Adapter

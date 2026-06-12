@@ -24,6 +24,8 @@ Defines data persistence behaviors:
 - `writeLatest(result)`: Saves the current result (and appends to history list if state is `COMPLETED`).
 - `readHistory()`: Returns the historical list of completed tests.
 - `saveUrls(...)` & `readUrls()`: Stores/retrieves custom test endpoints.
+- `saveIterations(iterations)` & `readIterations()`: Stores/retrieves the test execution run count.
+- `clearHistory()`: Resets/deletes the test history log.
 
 ### `SpeedTestRunner.kt`
 Defines the speed tester engine. It accepts a `SpeedTestListener` to stream live updates (such as current speeds, peak speeds, or latencies) to the caller during the test.

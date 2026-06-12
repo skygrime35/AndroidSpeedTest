@@ -39,6 +39,8 @@ class MainActivity : Activity() {
     private lateinit var radioPingCloudflare: android.widget.RadioButton
     private lateinit var radioPingGoogle: android.widget.RadioButton
     private lateinit var btnSaveSettings: Button
+    private lateinit var editIterations: EditText
+    private lateinit var btnClearHistory: Button
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -65,6 +67,8 @@ class MainActivity : Activity() {
         radioPingCloudflare = findViewById(R.id.radio_ping_cloudflare)
         radioPingGoogle = findViewById(R.id.radio_ping_google)
         btnSaveSettings = findViewById(R.id.btn_save_settings)
+        editIterations = findViewById(R.id.edit_iterations)
+        btnClearHistory = findViewById(R.id.btn_clear_history)
 
         // Load URLs into Settings fields
         val repo = ServiceLocator.getRepository(this)
@@ -76,6 +80,7 @@ class MainActivity : Activity() {
         } else {
             radioPingCloudflare.isChecked = true
         }
+        editIterations.setText(repo.readIterations().toString())
 
         // Click Handlers
         btnRun.setOnClickListener {
@@ -90,14 +95,23 @@ class MainActivity : Activity() {
             } else {
                 "https://speed.cloudflare.com/__down?bytes=0"
             }
+            val iterationsStr = editIterations.text.toString().trim()
+            val iterations = iterationsStr.toIntOrNull() ?: 3
             
-            if (down.isNotEmpty() && up.isNotEmpty()) {
+            if (down.isNotEmpty() && up.isNotEmpty() && iterations in 1..10) {
                 repo.saveUrls(down, up, ping)
+                repo.saveIterations(iterations)
                 Toast.makeText(this, "Settings saved!", Toast.LENGTH_SHORT).show()
                 refreshUi()
             } else {
-                Toast.makeText(this, "URLs cannot be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please check all inputs (iterations must be 1-10)", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        btnClearHistory.setOnClickListener {
+            repo.clearHistory()
+            Toast.makeText(this, "History cleared!", Toast.LENGTH_SHORT).show()
+            refreshUi()
         }
 
         // Request permissions

@@ -8,4 +8,7 @@ interface SpeedTestRepository {
     fun readHistory(): List<SpeedTestResult>
     fun saveUrls(downloadUrl: String, uploadUrl: String, pingUrl: String)
     fun readUrls(): Triple<String, String, String>
+    fun saveIterations(iterations: Int)
+    fun readIterations(): Int
+    fun clearHistory()
 }

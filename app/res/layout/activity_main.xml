@@ -245,6 +245,22 @@
                     android:buttonTint="@color/ping_yellow" />
             </RadioGroup>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Number of Runs (1-10)"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:layout_marginBottom="4dp" />
+            <EditText
+                android:id="@+id/edit_iterations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:inputType="number"
+                android:layout_marginBottom="12dp" />
+
             <Button
                 android:id="@+id/btn_save_settings"
                 android:layout_width="match_parent"
@@ -263,14 +279,33 @@
             android:background="@drawable/widget_bg"
             android:padding="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/title_history"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+                
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/title_history"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                
+                <Button
+                    android:id="@+id/btn_clear_history"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Clear"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="@color/upload_magenta"
+                    android:textSize="11sp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/history_container"
