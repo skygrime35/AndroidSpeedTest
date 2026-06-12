@@ -42,12 +42,11 @@ class SpeedTestWidget : AppWidgetProvider() {
             val component = ComponentName(context, SpeedTestWidget::class.java)
             val ids = appWidgetManager.getAppWidgetIds(component)
             
-            val connectingResult = SpeedTestResult(
-                downloadSpeedMaxBps = 0L,
-                uploadSpeedMaxBps = 0L,
-                latencyMs = 0.0,
-                timestamp = System.currentTimeMillis(),
-                state = SpeedTestState.CONNECTING
+            val repo = ServiceLocator.getRepository(context)
+            val latest = repo.readLatest()
+            val connectingResult = latest.copy(
+                state = SpeedTestState.CONNECTING,
+                timestamp = System.currentTimeMillis()
             )
             for (id in ids) {
                 appWidgetManager.updateAppWidget(id, WidgetRenderer.render(context, connectingResult))

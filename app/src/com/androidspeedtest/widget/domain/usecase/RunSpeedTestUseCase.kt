@@ -20,6 +20,7 @@ class RunSpeedTestUseCase(
         val completedUploads = mutableListOf<Long>()
         val completedLatencies = mutableListOf<Double>()
 
+        val previousResult = repository.readLatest()
         var latestResult = SpeedTestResult.idle()
 
         try {
@@ -32,17 +33,17 @@ class RunSpeedTestUseCase(
                 var currentRunLatency = 0.0
 
                 repository.writeLatest(
-                    SpeedTestResult(
-                        downloadSpeedMaxBps = 0L,
-                        uploadSpeedMaxBps = 0L,
-                        latencyMs = 0.0,
-                        timestamp = clock.nowMillis(),
-                        state = SpeedTestState.CONNECTING,
-                        currentIteration = iteration,
-                        totalIterations = totalIterations,
-                        completedDownloads = completedDownloads.toList(),
-                        completedUploads = completedUploads.toList(),
-                        completedLatencies = completedLatencies.toList()
+                    buildProgressResult(
+                        SpeedTestState.CONNECTING,
+                        iteration,
+                        totalIterations,
+                        currentRunLatency,
+                        currentRunMaxDownload,
+                        currentRunMaxUpload,
+                        completedDownloads.toList(),
+                        completedUploads.toList(),
+                        completedLatencies.toList(),
+                        previousResult
                     )
                 )
 
@@ -72,17 +73,17 @@ class RunSpeedTestUseCase(
                                 currentRunMaxUpload = maxBps
                             }
 
-                            val partialResult = SpeedTestResult(
-                                downloadSpeedMaxBps = currentRunMaxDownload,
-                                uploadSpeedMaxBps = currentRunMaxUpload,
-                                latencyMs = currentRunLatency,
-                                timestamp = clock.nowMillis(),
-                                state = state,
-                                currentIteration = iteration,
-                                totalIterations = totalIterations,
-                                completedDownloads = completedDownloads.toList(),
-                                completedUploads = completedUploads.toList(),
-                                completedLatencies = completedLatencies.toList()
+                            val partialResult = buildProgressResult(
+                                state,
+                                iteration,
+                                totalIterations,
+                                currentRunLatency,
+                                currentRunMaxDownload,
+                                currentRunMaxUpload,
+                                completedDownloads.toList(),
+                                completedUploads.toList(),
+                                completedLatencies.toList(),
+                                previousResult
                             )
                             repository.writeLatest(partialResult)
                             listener.onProgress(state, currentBps, maxBps, latencyMs)
@@ -120,9 +121,9 @@ class RunSpeedTestUseCase(
 
         } catch (e: Exception) {
             val errorResult = SpeedTestResult(
-                downloadSpeedMaxBps = 0L,
-                uploadSpeedMaxBps = 0L,
-                latencyMs = 0.0,
+                downloadSpeedMaxBps = if (completedDownloads.isNotEmpty()) completedDownloads.average().toLong() else previousResult.downloadSpeedMaxBps,
+                uploadSpeedMaxBps = if (completedUploads.isNotEmpty()) completedUploads.average().toLong() else previousResult.uploadSpeedMaxBps,
+                latencyMs = if (completedLatencies.isNotEmpty()) completedLatencies.first() else previousResult.latencyMs,
                 timestamp = clock.nowMillis(),
                 state = SpeedTestState.ERROR,
                 currentIteration = completedDownloads.size + 1,
@@ -138,5 +139,49 @@ class RunSpeedTestUseCase(
         }
 
         return latestResult
+    }
+
+    private fun buildProgressResult(
+        state: SpeedTestState,
+        iteration: Int,
+        totalIterations: Int,
+        currentRunLatency: Double,
+        currentRunMaxDownload: Long,
+        currentRunMaxUpload: Long,
+        completedDownloads: List<Long>,
+        completedUploads: List<Long>,
+        completedLatencies: List<Double>,
+        previousResult: SpeedTestResult
+    ): SpeedTestResult {
+        val latency = when {
+            currentRunLatency > 0.0 -> currentRunLatency
+            completedLatencies.isNotEmpty() -> completedLatencies.first()
+            else -> previousResult.latencyMs
+        }
+
+        val download = when {
+            currentRunMaxDownload > 0L -> currentRunMaxDownload
+            completedDownloads.isNotEmpty() -> completedDownloads.average().toLong()
+            else -> previousResult.downloadSpeedMaxBps
+        }
+
+        val upload = when {
+            currentRunMaxUpload > 0L -> currentRunMaxUpload
+            completedUploads.isNotEmpty() -> completedUploads.average().toLong()
+            else -> previousResult.uploadSpeedMaxBps
+        }
+
+        return SpeedTestResult(
+            downloadSpeedMaxBps = download,
+            uploadSpeedMaxBps = upload,
+            latencyMs = latency,
+            timestamp = clock.nowMillis(),
+            state = state,
+            currentIteration = iteration,
+            totalIterations = totalIterations,
+            completedDownloads = completedDownloads,
+            completedUploads = completedUploads,
+            completedLatencies = completedLatencies
+        )
     }
 }

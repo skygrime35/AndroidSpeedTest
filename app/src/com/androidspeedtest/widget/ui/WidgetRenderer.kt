@@ -20,9 +20,9 @@ object WidgetRenderer {
         val formatter = ServiceLocator.formatUseCase
 
         // 1. Format Speeds and Latency values
-        val pingStr = if (result.state == SpeedTestState.IDLE) "—" else formatter.formatLatency(result.latencyMs)
-        val downloadStr = if (result.state == SpeedTestState.IDLE || result.state == SpeedTestState.PINGING || result.state == SpeedTestState.CONNECTING) "—" else formatter.formatSpeed(result.downloadSpeedMaxBps)
-        val uploadStr = if (result.state != SpeedTestState.UPLOADING && result.state != SpeedTestState.COMPLETED) "—" else formatter.formatSpeed(result.uploadSpeedMaxBps)
+        val pingStr = formatter.formatLatency(result.latencyMs)
+        val downloadStr = formatter.formatSpeed(result.downloadSpeedMaxBps)
+        val uploadStr = formatter.formatSpeed(result.uploadSpeedMaxBps)
 
         views.setTextViewText(R.id.widget_ping_value, pingStr)
         views.setTextViewText(R.id.widget_download_value, downloadStr)

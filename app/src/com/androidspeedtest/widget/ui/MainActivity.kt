@@ -154,9 +154,9 @@ class MainActivity : Activity() {
         val formatter = ServiceLocator.formatUseCase
 
         // 1. Update live panel values
-        appPingVal.text = if (latest.state == SpeedTestState.IDLE) "—" else formatter.formatLatency(latest.latencyMs)
-        appDownloadVal.text = if (latest.state == SpeedTestState.IDLE || latest.state == SpeedTestState.PINGING || latest.state == SpeedTestState.CONNECTING) "—" else formatter.formatSpeed(latest.downloadSpeedMaxBps)
-        appUploadVal.text = if (latest.state != SpeedTestState.UPLOADING && latest.state != SpeedTestState.COMPLETED) "—" else formatter.formatSpeed(latest.uploadSpeedMaxBps)
+        appPingVal.text = formatter.formatLatency(latest.latencyMs)
+        appDownloadVal.text = formatter.formatSpeed(latest.downloadSpeedMaxBps)
+        appUploadVal.text = formatter.formatSpeed(latest.uploadSpeedMaxBps)
 
         // 2. Update status label and run button
         btnRun.isEnabled = (latest.state == SpeedTestState.IDLE || latest.state == SpeedTestState.COMPLETED || latest.state == SpeedTestState.ERROR)
