@@ -42,6 +42,11 @@ object WidgetRenderer {
         views.setProgressBar(R.id.widget_download_progress, 100, downloadProgress, false)
         views.setProgressBar(R.id.widget_upload_progress, 100, uploadProgress, false)
 
+        // 3. Set Active Loading Wheel Visibilities
+        views.setViewVisibility(R.id.widget_ping_loading, if (result.state == SpeedTestState.PINGING) View.VISIBLE else View.GONE)
+        views.setViewVisibility(R.id.widget_download_loading, if (result.state == SpeedTestState.DOWNLOADING) View.VISIBLE else View.GONE)
+        views.setViewVisibility(R.id.widget_upload_loading, if (result.state == SpeedTestState.UPLOADING) View.VISIBLE else View.GONE)
+
         val iterationPrefix = "Run ${result.currentIteration}/${result.totalIterations}: "
         val statusText = when (result.state) {
             SpeedTestState.IDLE -> context.getString(R.string.label_never_tested)

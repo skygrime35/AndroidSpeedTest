@@ -32,6 +32,9 @@ class MainActivity : Activity() {
     private lateinit var appDownloadVal: TextView
     private lateinit var appUploadVal: TextView
     private lateinit var btnRun: Button
+    private lateinit var appPingLoading: android.widget.ProgressBar
+    private lateinit var appDownloadLoading: android.widget.ProgressBar
+    private lateinit var appUploadLoading: android.widget.ProgressBar
     
     private lateinit var editDownloadUrl: EditText
     private lateinit var editUploadUrl: EditText
@@ -60,6 +63,9 @@ class MainActivity : Activity() {
         appDownloadVal = findViewById(R.id.app_download_val)
         appUploadVal = findViewById(R.id.app_upload_val)
         btnRun = findViewById(R.id.btn_run)
+        appPingLoading = findViewById(R.id.app_ping_loading)
+        appDownloadLoading = findViewById(R.id.app_download_loading)
+        appUploadLoading = findViewById(R.id.app_upload_loading)
         
         editDownloadUrl = findViewById(R.id.edit_download_url)
         editUploadUrl = findViewById(R.id.edit_upload_url)
@@ -157,6 +163,10 @@ class MainActivity : Activity() {
         appPingVal.text = formatter.formatLatency(latest.latencyMs)
         appDownloadVal.text = formatter.formatSpeed(latest.downloadSpeedMaxBps)
         appUploadVal.text = formatter.formatSpeed(latest.uploadSpeedMaxBps)
+
+        appPingLoading.visibility = if (latest.state == SpeedTestState.PINGING) android.view.View.VISIBLE else android.view.View.GONE
+        appDownloadLoading.visibility = if (latest.state == SpeedTestState.DOWNLOADING) android.view.View.VISIBLE else android.view.View.GONE
+        appUploadLoading.visibility = if (latest.state == SpeedTestState.UPLOADING) android.view.View.VISIBLE else android.view.View.GONE
 
         // 2. Update status label and run button
         btnRun.isEnabled = (latest.state == SpeedTestState.IDLE || latest.state == SpeedTestState.COMPLETED || latest.state == SpeedTestState.ERROR)

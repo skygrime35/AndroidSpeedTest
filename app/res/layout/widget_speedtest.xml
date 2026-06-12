@@ -26,13 +26,26 @@
             android:orientation="vertical"
             android:gravity="center">
             
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PING"
-                android:textColor="@color/text_secondary"
-                android:textSize="9sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PING"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+                <ProgressBar
+                    android:id="@+id/widget_ping_loading"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginLeft="4dp"
+                    android:visibility="gone" />
+            </LinearLayout>
                 
             <TextView
                 android:id="@+id/widget_ping_value"
@@ -60,13 +73,26 @@
             android:orientation="vertical"
             android:gravity="center">
             
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="↓ DOWN"
-                android:textColor="@color/text_secondary"
-                android:textSize="9sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="↓ DOWN"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+                <ProgressBar
+                    android:id="@+id/widget_download_loading"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginLeft="4dp"
+                    android:visibility="gone" />
+            </LinearLayout>
                 
             <TextView
                 android:id="@+id/widget_download_value"
@@ -104,13 +130,26 @@
             android:orientation="vertical"
             android:gravity="center">
             
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="↑ UP"
-                android:textColor="@color/text_secondary"
-                android:textSize="9sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="↑ UP"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+                <ProgressBar
+                    android:id="@+id/widget_upload_loading"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginLeft="4dp"
+                    android:visibility="gone" />
+            </LinearLayout>
                 
             <TextView
                 android:id="@+id/widget_upload_value"
