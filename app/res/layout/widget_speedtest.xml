@@ -53,7 +53,7 @@
             android:layout_marginTop="2dp" />
     </LinearLayout>
 
-    <View
+    <FrameLayout
         android:layout_width="1dp"
         android:layout_height="24dp"
         android:background="@color/border_card"
@@ -87,7 +87,7 @@
             android:layout_marginTop="1dp" />
     </LinearLayout>
 
-    <View
+    <FrameLayout
         android:layout_width="1dp"
         android:layout_height="24dp"
         android:background="@color/border_card"
@@ -131,7 +131,7 @@
             android:progressDrawable="@drawable/progress_download" />
     </LinearLayout>
 
-    <View
+    <FrameLayout
         android:layout_width="1dp"
         android:layout_height="24dp"
         android:background="@color/border_card"
