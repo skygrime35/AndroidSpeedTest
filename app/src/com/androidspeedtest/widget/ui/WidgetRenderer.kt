@@ -47,29 +47,7 @@ object WidgetRenderer {
         views.setViewVisibility(R.id.widget_download_loading, if (result.state == SpeedTestState.DOWNLOADING) View.VISIBLE else View.GONE)
         views.setViewVisibility(R.id.widget_upload_loading, if (result.state == SpeedTestState.UPLOADING) View.VISIBLE else View.GONE)
 
-        val iterationPrefix = "Run ${result.currentIteration}/${result.totalIterations}: "
-        val statusText = when (result.state) {
-            SpeedTestState.IDLE -> context.getString(R.string.label_never_tested)
-            SpeedTestState.CONNECTING -> iterationPrefix + "Connecting..."
-            SpeedTestState.PINGING -> iterationPrefix + "Ping..."
-            SpeedTestState.DOWNLOADING -> {
-                val current = formatter.formatSpeed(result.downloadSpeedMaxBps)
-                iterationPrefix + "Download ($current)"
-            }
-            SpeedTestState.UPLOADING -> {
-                val current = formatter.formatSpeed(result.uploadSpeedMaxBps)
-                iterationPrefix + "Upload ($current)"
-            }
-            SpeedTestState.COMPLETED -> {
-                val timeStr = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(result.timestamp))
-                "Last run: $timeStr • Avg of ${result.totalIterations} runs"
-            }
-            SpeedTestState.ERROR -> {
-                val errMsg = result.errorMessage ?: "Unknown error"
-                "Failed (Run ${result.currentIteration}/${result.totalIterations}): $errMsg. Tap to retry."
-            }
-        }
-        views.setTextViewText(R.id.widget_status, statusText)
+
 
         // 4. Attach Click PendingIntent to the entire widget root
         val intent = Intent(context, SpeedTestWidget::class.java).apply {

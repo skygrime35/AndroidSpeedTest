@@ -174,15 +174,4 @@
 
     </LinearLayout>
 
-    <!-- Status row -->
-    <TextView
-        android:id="@+id/widget_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/label_never_tested"
-        android:textColor="@color/text_secondary"
-        android:textSize="8sp"
-        android:gravity="center"
-        android:layout_marginTop="4dp" />
-
 </LinearLayout>
